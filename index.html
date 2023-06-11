@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>&lt;model-viewer&gt; template</title>
+    <meta charset="utf-8">
+    <meta name="description" content="&lt;model-viewer&gt; template">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link type="text/css" href="./styles.css" rel="stylesheet"/>
+	<style>
+  .hotspot{
+    display: block;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    border: none;
+    background-color: blue;
+    box-sizing: border-box;
+    pointer-events: none;
+  }
+
+  .hotspot[slot="hotspot-hand"]{
+    --min-hotspot-opacity: 0;
+    background-color: blue;
+  }
+  .hotspot[slot="hotspot-hand2"]{
+    --min-hotspot-opacity: 0;
+    background-color: blue;
+  }
+  .hotspot[slot="hotspot-hand3"]{
+    --min-hotspot-opacity: 0;
+    background-color: blue;
+  }
+  .hotspot[slot="hotspot-hand4"]{
+    --min-hotspot-opacity: 0;
+    background-color: blue;
+  }
+
+  .hotspot[slot="hotspot-foot"]:not([data-visible]) {
+    background-color: transparent;
+    border: 3px solid blue;
+  }
+
+  .annotation{
+    background-color: #FFF;
+    position: absolute;
+    transform: translate(10px, 10px);
+    border-radius: 10px;
+    padding: 10px;
+  }
+  /* This keeps child nodes hidden while the element loads */
+  :not(:defined) > * {
+    display: none;
+  }
+</style>
+	
+  </head>
+  <body>
+    <!-- <model-viewer> HTML element -->
+    <model-viewer id="pickMaterial" src="Scheme01.glb" camera-controls disable-tap poster="poster.webp" shadow-intensity="1" shadow-softness="1" environment-image="studio_small_512.jpg">
+      <div class="progress-bar hide" slot="progress-bar">
+          <div class="update-bar"></div>
+      </div>
+	  
+	<button id="coriumrail" class="hotspot" slot="hotspot-hand" data-position="2.0 4.0 1.0" data-normal="0.0 0.0 1.0" visibility="none"> 
+		<div class="annotation">CORIUM Rail</div>
+	</button>
+
+	<button id="verticalsupport" class="hotspot" slot="hotspot-hand2" data-position="3.5 7.0 1.0" data-normal="0.0 0.0 1.0" visibility="none"> 
+		<div class="annotation">Vertical Support</div>
+	</button>
+	
+	<button id="coriumtile" class="hotspot" slot="hotspot-hand3" data-position="-2.0 2.0 1.0" data-normal="0.0 0.0 1.0" visibility="none"> 
+		<div class="annotation">CORIUM Tile</div>
+	</button>
+	
+	<button id="insulation" class="hotspot" slot="hotspot-hand4" data-position="2.0 8.0 1.0" data-normal="0.0 0.0 1.0" visibility="none"> 
+		<div class="annotation">Insulation</div>
+	</button>
+
+    </model-viewer> 
+	
+	<script type="module">
+	const modelViewer = document.querySelector("model-viewer#pickMaterial");
+	
+	document.getElementById('coriumrail').style.visibility = 'hidden';
+	document.getElementById('verticalsupport').style.visibility = 'hidden';
+	document.getElementById('coriumtile').style.visibility = 'hidden';
+	document.getElementById('insulation').style.visibility = 'hidden';
+	
+	let clicked = false;
+	modelViewer.addEventListener('mousedown', e => { clicked = true; });
+	modelViewer.addEventListener('mousemove', e => { clicked = false; });
+	modelViewer.addEventListener('mouseup', e => { 
+		if(clicked) {
+			const material = modelViewer.materialFromPoint(event.clientX, event.clientY);
+			if (material.name == "m_coriumrail") {
+			  var x = document.getElementById('coriumrail');
+			  if (x.style.visibility === 'hidden') {
+				x.style.visibility = 'visible';
+				material.pbrMetallicRoughness.setBaseColorFactor([0.6, 0.6, 1]);
+			  } else {
+				x.style.visibility = 'hidden';
+				material.pbrMetallicRoughness.setBaseColorFactor([0.85, 0.85, 0.85]);
+			  }
+			}
+			if (material.name == "m_verticalsupport") {
+			  var x = document.getElementById('verticalsupport');
+			  if (x.style.visibility === 'hidden') {
+				x.style.visibility = 'visible';
+				material.pbrMetallicRoughness.setBaseColorFactor([0.4, 0.4, 0.8]);
+			  } else {
+				x.style.visibility = 'hidden';
+				material.pbrMetallicRoughness.setBaseColorFactor([0.55, 0.79, 0.76]);
+			  }
+			}
+			if (material.name == "m_coriumtile") {
+			  var x = document.getElementById('coriumtile');
+			  if (x.style.visibility === 'hidden') {
+				x.style.visibility = 'visible';
+				material.pbrMetallicRoughness.setBaseColorFactor([0.6, 0.7, 1.0]);
+			  } else {
+				x.style.visibility = 'hidden';
+				material.pbrMetallicRoughness.setBaseColorFactor([1, 1, 1]);
+			  }
+			}
+			if (material.name == "m_insulation") {
+			  var x = document.getElementById('insulation');
+			  if (x.style.visibility === 'hidden') {
+				x.style.visibility = 'visible';
+				material.pbrMetallicRoughness.setBaseColorFactor([0.3, 0.3, .6]);
+			  } else {
+				x.style.visibility = 'hidden';
+				material.pbrMetallicRoughness.setBaseColorFactor([0.82, 0.73, 0.22]);
+			  }
+			}
+		}
+			
+
+		// Reset this back to false for next time
+		clicked = false; 
+	});
+	</script>
+	
+	
+	<script src="script.js"></script>
+    <!-- Loads <model-viewer> for browsers: -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
+  </body>
+</html>
